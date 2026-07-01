@@ -94,18 +94,17 @@
 }
 
 /*
- * Slimmer variant for dense inner scroll regions (e.g. the admin table), so the
- * bar reads lighter than the 12px global one. Only the track size and the inset
- * border shrink — the red thumb colour and hover/active states are inherited
- * from the global rules above (we deliberately don't re-set background-color).
+ * Hide scrollbars on both axes for the admin table while keeping it scrollable.
+ * Class selectors beat the universal/element rules above, so the table opts out
+ * of the global red bar.
  */
-.thin-scrollbar::-webkit-scrollbar {
-  width: 4px;
-  height: 4px;
+.no-scrollbar {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* legacy Edge */
 }
 
-.thin-scrollbar::-webkit-scrollbar-thumb {
-  border: 1px solid var(--paper);
+.no-scrollbar::-webkit-scrollbar {
+  display: none; /* WebKit (Chrome, Safari, Edge) */
 }
 
 /* Honor users who prefer less motion. */

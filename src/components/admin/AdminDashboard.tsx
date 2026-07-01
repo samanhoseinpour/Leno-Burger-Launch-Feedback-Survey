@@ -127,7 +127,7 @@ export function AdminDashboard({ responses }: { responses: Response[] }) {
             هنوز نظری ثبت نشده است.
           </p>
         ) : (
-          <div className="thin-scrollbar mt-3 max-h-[70vh] overflow-auto rounded-2xl border border-line">
+          <div className="no-scrollbar mt-3 max-h-[70vh] overflow-auto rounded-2xl border border-line">
             <table className="w-max min-w-full border-collapse text-sm">
               <thead>
                 <tr className="text-right text-xs text-muted [&>th]:sticky [&>th]:top-0 [&>th]:bg-cream2 [&>th]:shadow-[inset_0_-1px_0_var(--color-line)]">
