@@ -35,22 +35,47 @@ export type QuestionId = "q1" | "q2" | "q3" | "q4" | "q5" | "q6";
 export type Question = {
   id: QuestionId;
   text: string;
+  // Short label for the admin dashboard table header — an abstraction of the
+  // full question, NOT card copy (e.g. "طعم برگر را چگونه…؟" → "طعم برگر").
+  short: string;
   scale: readonly string[];
 };
 
 export const QUESTIONS: readonly Question[] = [
-  { id: "q1", text: "طعم برگر را چگونه ارزیابی می‌کنید؟", scale: SCALE_QUALITY },
-  { id: "q2", text: "اندازه‌ی پرس چطور بود؟", scale: SCALE_QUALITY },
-  { id: "q3", text: "کیفیت و تازگی مواد اولیه چطور بود؟", scale: SCALE_QUALITY },
+  {
+    id: "q1",
+    text: "طعم برگر را چگونه ارزیابی می‌کنید؟",
+    short: "طعم برگر",
+    scale: SCALE_QUALITY,
+  },
+  {
+    id: "q2",
+    text: "اندازه‌ی پرس چطور بود؟",
+    short: "حجم غذا",
+    scale: SCALE_QUALITY,
+  },
+  {
+    id: "q3",
+    text: "کیفیت و تازگی مواد اولیه چطور بود؟",
+    short: "کیفیت مواد",
+    scale: SCALE_QUALITY,
+  },
   {
     id: "q4",
     text: "سرعت آماده‌سازی و سرو سفارش چگونه بود؟",
+    short: "سرعت سرو",
     scale: SCALE_QUALITY,
   },
-  { id: "q5", text: "کیفیت لنو، ارزش قیمتش را داشت؟", scale: SCALE_VALUE },
+  {
+    id: "q5",
+    text: "کیفیت لنو، ارزش قیمتش را داشت؟",
+    short: "ارزش قیمت",
+    scale: SCALE_VALUE,
+  },
   {
     id: "q6",
     text: "لنو را به دوستان و آشنایان خود پیشنهاد می‌دهید؟",
+    short: "پیشنهاد به دوستان",
     scale: SCALE_RECO,
   },
 ];
@@ -90,4 +115,7 @@ export const UI_COPY = {
   // announces the *-marked required inputs to screen readers.
   optionalTag: "اختیاری",
   requiredHint: "الزامی",
+  // Admin dashboard: expand/collapse a long «سفارش / نظر» write-in.
+  showMore: "بیشتر",
+  showLess: "کمتر",
 } as const;

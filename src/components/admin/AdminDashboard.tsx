@@ -3,6 +3,8 @@ import Link from 'next/link';
 import { Brand } from '@/components/Brand';
 import { summarizeAll } from '@/lib/stats';
 import { toPersianDigits } from '@/lib/format';
+import { QUESTIONS } from '@/lib/survey';
+import { OrderNoteCell } from '@/components/admin/OrderNoteCell';
 import { adminLogout } from '@/app/admin/actions';
 
 const dateFormatter = new Intl.DateTimeFormat('fa-IR', {
@@ -125,22 +127,37 @@ export function AdminDashboard({ responses }: { responses: Response[] }) {
             هنوز نظری ثبت نشده است.
           </p>
         ) : (
-          <div className="mt-3 overflow-hidden rounded-2xl border border-line">
-            <table className="w-full border-collapse text-sm">
+          <div className="mt-3 overflow-x-auto rounded-2xl border border-line">
+            <table className="w-max min-w-full border-collapse text-sm">
               <thead>
                 <tr className="bg-cream2/60 text-right text-xs text-muted">
-                  <th className="p-3 font-semibold">سفارش / نظر</th>
-                  <th className="p-3 font-semibold">نام</th>
-                  <th className="p-3 font-semibold">تلفن</th>
-                  <th className="p-3 font-semibold">تاریخ</th>
+                  <th scope="col" className="p-3 font-semibold">
+                    نام
+                  </th>
+                  <th scope="col" className="p-3 font-semibold">
+                    تلفن
+                  </th>
+                  {QUESTIONS.map((question) => (
+                    <th
+                      key={question.id}
+                      scope="col"
+                      title={question.text}
+                      className="whitespace-nowrap p-3 text-center font-semibold"
+                    >
+                      {question.short}
+                    </th>
+                  ))}
+                  <th scope="col" className="p-3 font-semibold">
+                    سفارش / نظر
+                  </th>
+                  <th scope="col" className="p-3 font-semibold">
+                    تاریخ
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {responses.map((r) => (
                   <tr key={r.id} className="border-t border-line align-top">
-                    <td className="p-3 leading-7 text-ink">
-                      {r.orderNote ?? '—'}
-                    </td>
                     <td className="whitespace-nowrap p-3 text-ink">
                       {r.name ?? '—'}
                     </td>
@@ -149,6 +166,31 @@ export function AdminDashboard({ responses }: { responses: Response[] }) {
                       className="whitespace-nowrap p-3 text-start font-mono text-xs text-ink"
                     >
                       {r.phone ?? '—'}
+                    </td>
+                    {QUESTIONS.map((question) => {
+                      const value = r[question.id];
+                      const label =
+                        typeof value === 'number'
+                          ? question.scale[value - 1]
+                          : null;
+                      const low = typeof value === 'number' && value <= 2;
+                      return (
+                        <td
+                          key={question.id}
+                          className={`whitespace-nowrap p-3 text-center text-xs ${
+                            label == null
+                              ? 'text-muted'
+                              : low
+                                ? 'font-semibold text-brand'
+                                : 'text-ink'
+                          }`}
+                        >
+                          {label ?? '—'}
+                        </td>
+                      );
+                    })}
+                    <td className="p-3 align-top">
+                      <OrderNoteCell text={r.orderNote} />
                     </td>
                     <td className="whitespace-nowrap p-3 text-muted">
                       {dateFormatter.format(r.createdAt)}

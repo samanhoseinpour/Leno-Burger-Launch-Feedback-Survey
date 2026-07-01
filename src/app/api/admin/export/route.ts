@@ -1,16 +1,13 @@
 import { NextResponse } from "next/server";
 import { isAdmin } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { QUESTIONS } from "@/lib/survey";
 
 const HEADER = [
   "شناسه",
   "تاریخ ثبت",
-  "طعم",
-  "اندازه",
-  "کیفیت مواد",
-  "سرعت",
-  "ارزش",
-  "پیشنهاد",
+  // Rating columns — labels match the admin table (QUESTIONS[i].short).
+  ...QUESTIONS.map((q) => q.short),
   "سفارش / نظر",
   "نام",
   "تلفن",
@@ -39,12 +36,12 @@ export async function GET() {
   const rows = responses.map((r) => [
     r.id,
     r.createdAt,
-    r.q1,
-    r.q2,
-    r.q3,
-    r.q4,
-    r.q5,
-    r.q6,
+    // Emit the scale label ("خیلی خوب" …) rather than the raw 1..5, matching the
+    // admin table. Blank when the guest skipped the question.
+    ...QUESTIONS.map((q) => {
+      const value = r[q.id];
+      return typeof value === "number" ? q.scale[value - 1] : null;
+    }),
     r.orderNote,
     r.name,
     r.phone,
