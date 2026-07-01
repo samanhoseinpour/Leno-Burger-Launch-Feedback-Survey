@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 /*
  * Leno brand tokens — values copied exactly from SPEC.md §"Brand tokens".
@@ -91,6 +91,21 @@
 
 ::-webkit-scrollbar-corner {
   background: transparent;
+}
+
+/*
+ * Slimmer variant for dense inner scroll regions (e.g. the admin table), so the
+ * bar reads lighter than the 12px global one. Only the track size and the inset
+ * border shrink — the red thumb colour and hover/active states are inherited
+ * from the global rules above (we deliberately don't re-set background-color).
+ */
+.thin-scrollbar::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.thin-scrollbar::-webkit-scrollbar-thumb {
+  border: 1px solid var(--paper);
 }
 
 /* Honor users who prefer less motion. */

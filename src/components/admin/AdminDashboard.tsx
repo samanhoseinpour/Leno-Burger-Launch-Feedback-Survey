@@ -127,10 +127,10 @@ export function AdminDashboard({ responses }: { responses: Response[] }) {
             هنوز نظری ثبت نشده است.
           </p>
         ) : (
-          <div className="mt-3 overflow-x-auto rounded-2xl border border-line">
+          <div className="thin-scrollbar mt-3 max-h-[70vh] overflow-auto rounded-2xl border border-line">
             <table className="w-max min-w-full border-collapse text-sm">
               <thead>
-                <tr className="bg-cream2/60 text-right text-xs text-muted">
+                <tr className="text-right text-xs text-muted [&>th]:sticky [&>th]:top-0 [&>th]:bg-cream2 [&>th]:shadow-[inset_0_-1px_0_var(--color-line)]">
                   <th scope="col" className="p-3 font-semibold">
                     نام
                   </th>
