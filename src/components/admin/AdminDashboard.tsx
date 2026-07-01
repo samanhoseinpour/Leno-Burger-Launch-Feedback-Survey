@@ -1,19 +1,18 @@
-import type { Response } from "@prisma/client";
-import { Brand } from "@/components/Brand";
-import { summarizeAll } from "@/lib/stats";
-import { toPersianDigits } from "@/lib/format";
-import { adminLogout } from "@/app/admin/actions";
+import type { Response } from '@prisma/client';
+import { Brand } from '@/components/Brand';
+import { summarizeAll } from '@/lib/stats';
+import { toPersianDigits } from '@/lib/format';
+import { adminLogout } from '@/app/admin/actions';
 
-const dateFormatter = new Intl.DateTimeFormat("fa-IR", {
-  dateStyle: "short",
-  timeStyle: "short",
-  timeZone: "Asia/Tehran",
+const dateFormatter = new Intl.DateTimeFormat('fa-IR', {
+  dateStyle: 'short',
+  timeStyle: 'short',
+  timeZone: 'Asia/Tehran',
 });
 
 export function AdminDashboard({ responses }: { responses: Response[] }) {
   const total = responses.length;
   const perQuestion = summarizeAll(responses);
-  const writeIns = responses.filter((r) => r.orderNote);
 
   return (
     <main className="mx-auto max-w-2xl px-5 py-8">
@@ -25,7 +24,7 @@ export function AdminDashboard({ responses }: { responses: Response[] }) {
         <form action={adminLogout}>
           <button
             type="submit"
-            className="rounded-full border border-line px-4 py-2 text-sm text-muted transition hover:border-brand hover:text-brand"
+            className="rounded-full border border-line px-4 py-2 text-sm text-muted transition hover:border-brand hover:text-brand cursor-pointer"
           >
             خروج
           </button>
@@ -52,7 +51,9 @@ export function AdminDashboard({ responses }: { responses: Response[] }) {
       </section>
 
       <section className="mt-8 space-y-4">
-        <h2 className="text-sm font-semibold text-muted">میانگین و توزیع امتیازها</h2>
+        <h2 className="text-sm font-semibold text-muted">
+          میانگین و توزیع امتیازها
+        </h2>
         {perQuestion.map(({ question, stat }, index) => (
           <div
             key={question.id}
@@ -110,7 +111,7 @@ export function AdminDashboard({ responses }: { responses: Response[] }) {
 
       <section className="mt-8">
         <h2 className="text-sm font-semibold text-muted">سفارش‌ها و نظرها</h2>
-        {writeIns.length === 0 ? (
+        {total === 0 ? (
           <p className="mt-3 rounded-2xl border border-line bg-cream/30 p-5 text-sm text-muted">
             هنوز نظری ثبت نشده است.
           </p>
@@ -126,17 +127,19 @@ export function AdminDashboard({ responses }: { responses: Response[] }) {
                 </tr>
               </thead>
               <tbody>
-                {writeIns.map((r) => (
+                {responses.map((r) => (
                   <tr key={r.id} className="border-t border-line align-top">
-                    <td className="p-3 leading-7 text-ink">{r.orderNote}</td>
+                    <td className="p-3 leading-7 text-ink">
+                      {r.orderNote ?? '—'}
+                    </td>
                     <td className="whitespace-nowrap p-3 text-ink">
-                      {r.name ?? "—"}
+                      {r.name ?? '—'}
                     </td>
                     <td
                       dir="ltr"
                       className="whitespace-nowrap p-3 text-start font-mono text-xs text-ink"
                     >
-                      {r.phone ?? "—"}
+                      {r.phone ?? '—'}
                     </td>
                     <td className="whitespace-nowrap p-3 text-muted">
                       {dateFormatter.format(r.createdAt)}
