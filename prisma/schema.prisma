@@ -1,16 +1,16 @@
 // Prisma schema for the Leno launch feedback survey.
 //
-// Dev uses SQLite; production uses Postgres. To deploy, the ONLY change
-// needed here is the datasource `provider` below (sqlite -> postgresql),
-// plus pointing DATABASE_URL at the Postgres instance. See README.md.
-// Never ship SQLite to Vercel serverless (no persistent disk).
+// Postgres (Neon) in every environment. Vercel serverless has no persistent
+// disk, so SQLite is never used. DATABASE_URL is the Neon connection string:
+// auto-injected into the Vercel project by the Neon Marketplace integration,
+// and set in your local .env for development. See README.md.
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 

@@ -11,7 +11,7 @@ Built to the specification in [`SPEC.md`](./SPEC.md).
 
 - **Next.js 16** (App Router) + **React 19** + **TypeScript**
 - **Tailwind CSS v4**
-- **Prisma ORM** — SQLite in development, Postgres in production
+- **Prisma ORM** — Postgres (Neon) in every environment
 - **Server Actions** for the form submit; a Route Handler only for the CSV export
 - Fonts via `next/font/google` (Vazirmatn for Persian UI, Archivo Black for the
   "Leno" wordmark, JetBrains Mono for numeric accents)
@@ -28,11 +28,11 @@ npm install
 
 # 2. Set up environment variables
 cp .env.example .env
-#   DATABASE_URL is preset for local SQLite.
+#   Set DATABASE_URL to your Neon connection string (a Neon dev branch is ideal).
 #   Set ADMIN_PASSWORD to any value — it gates /admin.
 
-# 3. Create the local database (and optionally seed sample data)
-npx prisma migrate dev      # applies the schema to prisma/dev.db
+# 3. Create the tables (and optionally seed sample data)
+npx prisma migrate deploy   # applies migrations to your Postgres database
 npm run db:seed             # optional: sample responses so /admin has data
 
 # 4. Run it
@@ -47,7 +47,7 @@ screen. Review results at `/admin` (enter your `ADMIN_PASSWORD`).
 | Script | Purpose |
 | --- | --- |
 | `npm run dev` | Start the development server |
-| `npm run build` | Production build (runs `prisma generate` first) |
+| `npm run build` | Production build (runs `prisma generate` + `prisma migrate deploy` first) |
 | `npm run start` | Serve the production build |
 | `npm run lint` | Run ESLint |
 | `npm run db:seed` | Seed sample responses |
@@ -66,29 +66,19 @@ and distribution per question, and the free-text write-ins, plus a **CSV export*
 Only the browser `userAgent` is stored with each response. No IP address and no
 tracking are collected.
 
-## Deploying to Vercel (Postgres)
+## Deploying to Vercel (Neon Postgres)
 
-SQLite has no persistent disk on serverless — use Postgres in production.
+The datasource is already Postgres — no code change needed. SQLite is never used
+(serverless has no persistent disk).
 
-1. Provision Postgres (Vercel Postgres, Neon, or Supabase).
-2. In [`prisma/schema.prisma`](./prisma/schema.prisma), change the datasource
-   `provider` — this is the only code change needed:
-   ```prisma
-   datasource db {
-     provider = "postgresql" // was "sqlite"
-     url      = env("DATABASE_URL")
-   }
-   ```
-3. In your Vercel project settings, add the environment variables `DATABASE_URL`
-   (the Postgres connection string) and `ADMIN_PASSWORD`.
-4. Create the tables in Postgres. The committed migration is SQLite-specific, so
-   the simplest path is:
-   ```bash
-   DATABASE_URL="<your-postgres-url>" npx prisma db push
-   ```
-   (For a migration history instead, delete `prisma/migrations/` and run
-   `npx prisma migrate dev --name init` against the Postgres database.)
-5. Deploy. The `build` script runs `prisma generate` automatically.
+1. Push this repo to GitHub and import it in Vercel (**New Project** → select the repo).
+2. Add the **Neon** integration from the Vercel Marketplace to the project. It
+   provisions a Postgres database and injects `DATABASE_URL` into every
+   environment automatically.
+3. Add the `ADMIN_PASSWORD` environment variable in Vercel (**Project → Settings →
+   Environment Variables**). Use a strong value.
+4. Deploy. The `build` script runs `prisma generate && prisma migrate deploy`, so
+   the `Response` table is created on the first deploy and kept in sync afterward.
 
 ## Notes
 
@@ -104,7 +94,7 @@ SQLite has no persistent disk on serverless — use Postgres in production.
 
 ```
 prisma/
-  schema.prisma        # Response model; provider = sqlite (dev)
+  schema.prisma        # Response model; provider = postgresql (Neon)
   seed.mjs             # sample responses
 src/
   app/

@@ -1,7 +1,10 @@
+-- CreateSchema
+CREATE SCHEMA IF NOT EXISTS "public";
+
 -- CreateTable
 CREATE TABLE "Response" (
-    "id" TEXT NOT NULL PRIMARY KEY,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "id" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "q1" INTEGER,
     "q2" INTEGER,
     "q3" INTEGER,
@@ -11,5 +14,8 @@ CREATE TABLE "Response" (
     "orderNote" TEXT,
     "name" TEXT,
     "phone" TEXT,
-    "userAgent" TEXT
+    "userAgent" TEXT,
+
+    CONSTRAINT "Response_pkey" PRIMARY KEY ("id")
 );
+
