@@ -2,7 +2,9 @@ import { COPY } from "@/lib/survey";
 import { Brand } from "./Brand";
 
 // Shared success screen — used both in place after submit and on /thanks.
-export function ThankYou() {
+// `action` renders an optional CTA under the message; only /thanks passes one
+// (a link back to `/` from the in-place state wouldn't remount the form).
+export function ThankYou({ action }: { action?: React.ReactNode }) {
   return (
     <div
       role="status"
@@ -31,6 +33,8 @@ export function ThankYou() {
         </p>
         <p className="text-sm leading-7 text-muted">{COPY.footer.line2}</p>
       </div>
+
+      {action}
 
       <Brand surface="paper" />
     </div>
