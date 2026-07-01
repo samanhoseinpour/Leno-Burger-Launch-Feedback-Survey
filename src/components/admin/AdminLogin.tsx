@@ -30,7 +30,8 @@ export function AdminLogin() {
         dir="ltr"
         autoFocus
         autoComplete="current-password"
-        className="mt-1.5 h-11 w-full rounded-xl border border-line bg-paper px-3 text-start text-ink outline-none transition focus:border-brand"
+        // text-base (16px), explicit: keeps iOS Safari from zooming in on focus.
+        className="mt-1.5 h-11 w-full rounded-xl border border-line bg-paper px-3 text-start text-base text-ink outline-none transition focus:border-brand"
       />
 
       {state.error && (

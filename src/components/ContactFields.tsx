@@ -24,7 +24,8 @@ export function ContactFields({ errors = {}, onFieldChange }: ContactFieldsProps
             onChange={() => onFieldChange?.("name")}
             aria-invalid={errors.name ? true : undefined}
             aria-describedby={errors.name ? "name-error" : undefined}
-            className={`h-11 rounded-xl border bg-paper px-3 text-sm text-ink outline-none transition focus:border-brand ${
+            // text-base (16px) keeps iOS Safari from zooming in on focus.
+            className={`h-11 rounded-xl border bg-paper px-3 text-base text-ink outline-none transition focus:border-brand ${
               errors.name ? "border-brand" : "border-line"
             }`}
           />
@@ -49,7 +50,8 @@ export function ContactFields({ errors = {}, onFieldChange }: ContactFieldsProps
             onChange={() => onFieldChange?.("phone")}
             aria-invalid={errors.phone ? true : undefined}
             aria-describedby={errors.phone ? "phone-error" : undefined}
-            className={`h-11 rounded-xl border bg-paper px-3 text-start text-sm text-ink outline-none transition placeholder:text-muted/50 focus:border-brand ${
+            // text-base (16px) keeps iOS Safari from zooming in on focus.
+            className={`h-11 rounded-xl border bg-paper px-3 text-start text-base text-ink outline-none transition placeholder:text-muted/50 focus:border-brand ${
               errors.phone ? "border-brand" : "border-line"
             }`}
           />

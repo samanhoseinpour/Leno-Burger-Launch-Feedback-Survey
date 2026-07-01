@@ -22,11 +22,13 @@ export function TextQuestion({ number, text, name }: TextQuestionProps) {
           </span>
         </span>
       </label>
+      {/* text-base (16px): iOS Safari auto-zooms into a focused field under
+          16px. Keep it at 16px so tapping to type doesn't zoom the page. */}
       <textarea
         id={name}
         name={name}
         rows={3}
-        className="w-full resize-none rounded-2xl border border-line bg-cream/30 px-4 py-3 text-sm leading-7 text-ink outline-none transition placeholder:text-muted/60 focus:border-brand focus:bg-cream/50"
+        className="w-full resize-none rounded-2xl border border-line bg-cream/30 px-4 py-3 text-base leading-7 text-ink outline-none transition placeholder:text-muted/60 focus:border-brand focus:bg-cream/50"
       />
     </div>
   );
