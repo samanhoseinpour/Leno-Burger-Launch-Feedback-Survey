@@ -1,26 +1,64 @@
 @import "tailwindcss";
 
+/*
+ * Leno brand tokens — values copied exactly from SPEC.md §"Brand tokens".
+ * Direction: flat and warm. No gradients, no heavy drop-shadow cards.
+ */
+@theme {
+  --color-brand: #b91c1c; /* --red: primary */
+  --color-cream: #fff4e6; /* on-red text / light surfaces */
+  --color-cream2: #f8e9d2; /* alt header (cream theme) */
+  --color-ink: #1a1614; /* body text */
+  --color-paper: #fbf7f0; /* page background */
+  --color-muted: #6b6258; /* secondary text */
+  --color-line: rgb(26 22 20 / 0.14); /* hairlines */
+
+  --font-sans: var(--font-vazir), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jbmono), ui-monospace, SFMono-Regular, monospace;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Spec-named aliases, for direct use in CSS / inline styles (e.g. the mark). */
+  --red: var(--color-brand);
+  --cream: var(--color-cream);
+  --cream2: var(--color-cream2);
+  --ink: var(--color-ink);
+  --paper: var(--color-paper);
+  --muted: var(--color-muted);
+  --line: var(--color-line);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@layer base {
+  html {
+    color-scheme: light;
+    -webkit-text-size-adjust: 100%;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  body {
+    background-color: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Visible keyboard focus is an accessibility acceptance criterion. */
+  :focus-visible {
+    outline: 2px solid var(--red);
+    outline-offset: 3px;
+    border-radius: 6px;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Honor users who prefer less motion. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
