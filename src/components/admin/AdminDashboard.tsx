@@ -1,4 +1,5 @@
 import type { Response } from '@prisma/client';
+import Link from 'next/link';
 import { Brand } from '@/components/Brand';
 import { summarizeAll } from '@/lib/stats';
 import { toPersianDigits } from '@/lib/format';
@@ -21,14 +22,22 @@ export function AdminDashboard({ responses }: { responses: Response[] }) {
           <Brand surface="paper" />
           <p className="mt-2 text-sm text-muted">داشبورد نظرسنجی</p>
         </div>
-        <form action={adminLogout}>
-          <button
-            type="submit"
-            className="rounded-full border border-line px-4 py-2 text-sm text-muted transition hover:border-brand hover:text-brand cursor-pointer"
+        <div className="flex flex-wrap justify-end gap-2">
+          <Link
+            href="/"
+            className="rounded-full border border-line px-4 py-2 text-sm text-ink transition hover:border-brand hover:text-brand"
           >
-            خروج
-          </button>
-        </form>
+            بازگشت به نظرسنجی
+          </Link>
+          <form action={adminLogout}>
+            <button
+              type="submit"
+              className="rounded-full border border-line px-4 py-2 text-sm text-muted transition hover:border-brand hover:text-brand cursor-pointer"
+            >
+              خروج
+            </button>
+          </form>
+        </div>
       </header>
 
       <section className="mt-6 flex items-stretch gap-3">
