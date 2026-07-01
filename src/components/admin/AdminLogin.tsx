@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useActionState } from "react";
-import { adminLogin, type LoginState } from "@/app/admin/actions";
-import { Brand } from "@/components/Brand";
+import { useActionState } from 'react';
+import { adminLogin, type LoginState } from '@/app/admin/actions';
+import { Brand } from '@/components/Brand';
 
 const initialState: LoginState = {};
 
@@ -43,9 +43,9 @@ export function AdminLogin() {
       <button
         type="submit"
         disabled={pending}
-        className="mt-6 h-12 w-full rounded-xl bg-brand font-bold text-cream transition active:scale-[0.99] disabled:opacity-60"
+        className="mt-6 h-12 w-full rounded-xl bg-brand font-bold text-cream transition active:scale-[0.99] disabled:opacity-60 cursor-pointer"
       >
-        {pending ? "در حال ورود…" : "ورود"}
+        {pending ? 'در حال ورود…' : 'ورود'}
       </button>
     </form>
   );
