@@ -53,21 +53,34 @@
 
 /*
  * Custom scrollbar — themed with the brand tokens so it reads as part of Leno,
- * not the OS default. Slim red thumb inset against the paper background (the
- * border matches --paper to fake padding), transparent track, flat — no
- * gradients, per the brand direction.
+ * not the OS default. Slim red thumb floating on a fully transparent track,
+ * flat — no gradients, per the brand direction.
+ *
+ * The root scrollbar's "transparent" track shows the CANVAS (body background),
+ * never the page content, so pages that paint a different full-bleed backdrop
+ * must mirror it onto <body> (see the data-canvas rule below) or the gutter
+ * reads as a pale strip.
  */
 
-/* Standards properties (Firefox, and the modern cross-browser baseline). */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: var(--red) transparent;
+/*
+ * Standards properties — Firefox only. Blink/WebKit ignore the
+ * ::-webkit-scrollbar rules below whenever scrollbar-width/-color is non-auto,
+ * and Safari (scrollbar-width without scrollbar-color) would fall back to a
+ * native white-tracked scrollbar. Firefox is the one engine that doesn't
+ * recognize the ::-webkit-scrollbar selector.
+ */
+@supports not selector(::-webkit-scrollbar) {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--red) transparent;
+  }
 }
 
-/* WebKit / Blink (Chrome, Safari, Edge) get the fuller treatment. */
+/* WebKit / Blink (Chrome, Safari, Edge): custom-painted scrollbar. */
 ::-webkit-scrollbar {
   width: 12px;
   height: 12px;
+  background: transparent; /* the bare scrollbar base paints white if unset */
 }
 
 ::-webkit-scrollbar-track {
@@ -77,7 +90,8 @@
 ::-webkit-scrollbar-thumb {
   min-height: 40px;
   background-color: var(--red);
-  border: 3px solid var(--paper); /* matches page bg → looks like inset padding */
+  background-clip: padding-box; /* inset gap stays see-through on any surface */
+  border: 3px solid transparent;
   border-radius: 999px;
 }
 
@@ -91,6 +105,17 @@
 
 ::-webkit-scrollbar-corner {
   background: transparent;
+}
+
+/*
+ * Pages that paint a full-bleed cream2 backdrop from the sm breakpoint up
+ * (survey, thanks) mirror it on the canvas, so the scrollbar gutter and
+ * overscroll show cream2 instead of the default paper body.
+ */
+@media (min-width: 40rem) {
+  body:has([data-canvas='cream2']) {
+    background-color: var(--cream2);
+  }
 }
 
 /*
