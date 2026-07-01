@@ -81,7 +81,13 @@ export const COPY = {
 // the interface's own voice (the card has no equivalents for these states).
 export const UI_COPY = {
   submitting: "در حال ثبت…",
-  emptyError: "لطفاً حداقل به یکی از پرسش‌ها پاسخ دهید یا نظرتان را بنویسید.",
+  fixErrors: "لطفاً موارد مشخص‌شده را کامل کنید.",
   serverError: "متأسفانه در ثبت نظر مشکلی پیش آمد. لطفاً دوباره تلاش کنید.",
   retry: "تلاش دوباره",
+  // Field-status markers for the required/optional distinction (see validation.ts:
+  // q1..q6 are required, orderNote/name/phone are optional). `optionalTag` renders
+  // as "(اختیاری)" beside optional inputs; `requiredHint` is visually hidden and
+  // announces the *-marked required inputs to screen readers.
+  optionalTag: "اختیاری",
+  requiredHint: "الزامی",
 } as const;

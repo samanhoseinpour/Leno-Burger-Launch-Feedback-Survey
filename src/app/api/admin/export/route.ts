@@ -19,7 +19,11 @@ const HEADER = [
 
 function csvCell(value: unknown): string {
   if (value === null || value === undefined) return "";
-  const s = value instanceof Date ? value.toISOString() : String(value);
+  let s = value instanceof Date ? value.toISOString() : String(value);
+  // Neutralize spreadsheet formula injection: guest-supplied text (name, note,
+  // phone) is opened in Excel/Sheets, where a leading = + - @ (or tab/CR) would
+  // execute as a formula. Prefix with an apostrophe so it stays literal text.
+  if (/^[=+\-@\t\r]/.test(s)) s = "'" + s;
   return /[",\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
 }
 

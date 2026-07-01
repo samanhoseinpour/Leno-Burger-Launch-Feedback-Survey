@@ -1,4 +1,5 @@
 import { toPersianDigits } from "@/lib/format";
+import { UI_COPY } from "@/lib/survey";
 
 type TextQuestionProps = {
   number: number;
@@ -15,6 +16,10 @@ export function TextQuestion({ number, text, name }: TextQuestionProps) {
         </span>
         <span className="pt-0.5 text-base font-semibold leading-7 text-ink">
           {text}
+          {/* The order note (Q7) is optional free text — mark it like name/phone. */}
+          <span className="ms-1.5 whitespace-nowrap text-sm font-normal text-muted">
+            ({UI_COPY.optionalTag})
+          </span>
         </span>
       </label>
       <textarea

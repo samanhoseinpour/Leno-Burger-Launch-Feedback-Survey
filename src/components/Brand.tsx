@@ -2,16 +2,23 @@
 // (inline SVG from SPEC.md §"Logo mark"), next to the "Leno" wordmark.
 //
 // The badge contrasts the surface it sits on so it stays legible:
-//   surface="red"   → cream circle + red mark  (on the red header band)
-//   surface="paper" → red circle + cream mark  (on the warm paper footer)
+//   surface="red"   → cream badge + red mark  (on the red header / footer band)
+//   surface="paper" → red badge + cream mark  (on the warm paper surfaces)
 // Both use the spec's red/cream pairings; the assignment keeps the mark visible.
+//
+// markOnly renders just the badge (used in the footer band, which has no wordmark).
 
 type BrandProps = {
   surface?: "red" | "paper";
+  markOnly?: boolean;
   className?: string;
 };
 
-export function Brand({ surface = "red", className = "" }: BrandProps) {
+export function Brand({
+  surface = "red",
+  markOnly = false,
+  className = "",
+}: BrandProps) {
   const onRed = surface === "red";
 
   return (
@@ -31,14 +38,16 @@ export function Brand({ surface = "red", className = "" }: BrandProps) {
         </svg>
       </span>
 
-      <span
-        dir="ltr"
-        className={`font-display text-[1.7rem] leading-none tracking-tight ${
-          onRed ? "text-cream" : "text-ink"
-        }`}
-      >
-        Leno
-      </span>
+      {!markOnly && (
+        <span
+          dir="ltr"
+          className={`font-display text-[1.7rem] leading-none tracking-tight ${
+            onRed ? "text-cream" : "text-ink"
+          }`}
+        >
+          Leno
+        </span>
+      )}
     </div>
   );
 }
