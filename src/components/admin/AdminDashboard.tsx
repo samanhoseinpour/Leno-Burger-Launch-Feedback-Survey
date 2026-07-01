@@ -16,8 +16,8 @@ export function AdminDashboard({ responses }: { responses: Response[] }) {
   const perQuestion = summarizeAll(responses);
 
   return (
-    <main className="mx-auto max-w-2xl px-5 py-8">
-      <header className="flex items-start justify-between gap-4">
+    <main className="mx-auto max-w-2xl px-5 pb-8 pt-4">
+      <header className="sticky top-0 z-10 -mx-5 flex items-start justify-between gap-4 border-b border-line bg-paper px-5 py-4">
         <div>
           <Brand surface="paper" />
           <p className="mt-2 text-sm text-muted">داشبورد نظرسنجی</p>
