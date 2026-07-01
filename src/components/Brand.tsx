@@ -22,7 +22,10 @@ export function Brand({
   const onRed = surface === "red";
 
   return (
-    <div className={`flex items-center gap-3 ${className}`}>
+    // The mark + Latin "Leno" wordmark is a fixed LTR lockup (mark left,
+    // wordmark right) — pin the direction so it renders identically on RTL
+    // surfaces (e.g. /admin) instead of flipping to inherit the page's dir.
+    <div dir="ltr" className={`flex items-center gap-3 ${className}`}>
       <span
         aria-hidden="true"
         className={`grid size-11 shrink-0 place-items-center rounded-full ${
