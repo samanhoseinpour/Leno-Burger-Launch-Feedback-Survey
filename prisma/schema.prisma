@@ -1,0 +1,30 @@
+// Prisma schema for the Leno launch feedback survey.
+//
+// Dev uses SQLite; production uses Postgres. To deploy, the ONLY change
+// needed here is the datasource `provider` below (sqlite -> postgresql),
+// plus pointing DATABASE_URL at the Postgres instance. See README.md.
+// Never ship SQLite to Vercel serverless (no persistent disk).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Response {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  q1        Int? // 1..5
+  q2        Int?
+  q3        Int?
+  q4        Int?
+  q5        Int?
+  q6        Int?
+  orderNote String? // Q7 free text
+  name      String?
+  phone     String?
+  userAgent String?
+}
