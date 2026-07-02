@@ -1,5 +1,6 @@
 import { toPersianDigits } from "@/lib/format";
 import { UI_COPY } from "@/lib/survey";
+import { LenoMark } from "./Brand";
 
 type RatingQuestionProps = {
   id: string;
@@ -59,10 +60,17 @@ export function RatingQuestion({
             />
             <span
               aria-hidden="true"
-              className={`size-11 rounded-full border-2 bg-cream/60 transition peer-hover:border-brand/60 peer-checked:border-brand peer-checked:bg-brand peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-brand sm:size-12 ${
+              className={`grid size-11 place-items-center rounded-full border-2 bg-cream/60 transition peer-hover:border-brand/60 peer-checked:border-brand peer-checked:bg-brand peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-brand sm:size-12 ${
                 error ? "border-brand/70" : "border-brand/30"
               }`}
-            />
+            >
+              {/* The badge "stamp" — pops in while this option's radio is
+                  checked. The mark is a descendant of this span (not a
+                  sibling of the radio), so it can't use peer-checked; the
+                  label is the `group`, and :has(:checked) only ever sees the
+                  label's own radio. */}
+              <LenoMark className="w-7 text-cream opacity-0 scale-75 transition duration-200 ease-out group-has-checked:opacity-100 group-has-checked:scale-100" />
+            </span>
             <span className="text-center text-[11px] font-medium leading-tight text-muted transition-colors peer-checked:font-bold peer-checked:text-ink sm:text-xs">
               {label}
             </span>
