@@ -14,6 +14,20 @@ type BrandProps = {
   className?: string;
 };
 
+// The bare three-bar mark. It draws in currentColor, so whichever surface
+// renders it (badge span, selected rating circle) picks the color via CSS.
+export function LenoMark({ className }: { className?: string }) {
+  return (
+    <svg viewBox="10 32 100 70" aria-hidden="true" className={className}>
+      <g fill="currentColor">
+        <rect x="20" y="40" width="80" height="14" rx="7" />
+        <rect x="14" y="60" width="92" height="14" rx="3" />
+        <rect x="20" y="80" width="80" height="14" rx="7" />
+      </g>
+    </svg>
+  );
+}
+
 export function Brand({
   surface = "red",
   markOnly = false,
@@ -32,13 +46,7 @@ export function Brand({
           onRed ? "bg-cream text-brand" : "bg-brand text-cream"
         }`}
       >
-        <svg viewBox="10 32 100 70" className="w-7">
-          <g fill="currentColor">
-            <rect x="20" y="40" width="80" height="14" rx="7" />
-            <rect x="14" y="60" width="92" height="14" rx="3" />
-            <rect x="20" y="80" width="80" height="14" rx="7" />
-          </g>
-        </svg>
+        <LenoMark className="w-7" />
       </span>
 
       {!markOnly && (
