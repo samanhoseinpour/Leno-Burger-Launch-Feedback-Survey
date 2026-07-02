@@ -1,7 +1,7 @@
 # Design: Logo stamp in selected rating circles
 
 **Date:** 2026-07-02
-**Status:** Draft — approach ("pop-in stamp") chosen by the user; final sign-off on this written spec pending.
+**Status:** Approved 2026-07-02. Implementation plan: `docs/superpowers/plans/2026-07-02-logo-selected-rating.md`.
 
 ## Context
 
@@ -17,7 +17,7 @@ On the survey (`/`), each of the six Likert questions renders five tappable circ
 ## Changes
 
 1. **`src/components/Brand.tsx`** — extract the inline three-bar SVG into an exported `LenoMark({ className })` component in the same file; `Brand` renders it internally. No visual change to any current usage; it gives the mark one source of truth instead of duplicating the SVG.
-2. **`src/components/RatingQuestion.tsx`** — the aria-hidden circle span becomes a `grid place-items-center` container with a `LenoMark` child. The mark stays `w-7` at both circle sizes (`size-11` and `sm:size-12`), matching the badge's own proportions. It is `text-cream`, hidden at `opacity-0 scale-75`, and transitions to `opacity-100 scale-100` when the sibling radio (`peer`) is checked. State is pure CSS via the existing peer mechanism — no JS, no new props, no new state.
+2. **`src/components/RatingQuestion.tsx`** — the aria-hidden circle span becomes a `grid place-items-center` container with a `LenoMark` child. The mark stays `w-7` at both circle sizes (`size-11` and `sm:size-12`), matching the badge's own proportions. It is `text-cream`, hidden at `opacity-0 scale-75`, and transitions to `opacity-100 scale-100` while the option's radio is checked — pure CSS, driven from the option label's existing `group` class via `:has(:checked)` (Tailwind `group-has-checked:`), since the mark is a descendant of the circle span and `peer-checked:` only reaches siblings. Each label is its own `group`, so the state can't leak across options. No JS, no new props, no new state.
 
 ## Invariants (unchanged by this design)
 
