@@ -108,6 +108,49 @@
 }
 
 /*
+ * iOS — every browser there is WebKit, and iOS applies NONE of the scrollbar
+ * CSS above to its native overlay indicator (::-webkit-scrollbar painting is
+ * skipped for touch scrolling; scrollbar-color, Safari 26.2+, doesn't tint it
+ * either). The brand bar is drawn by <IosScrollIndicator> instead. That
+ * component sets data-ios-scrollbar on <html> only after confirming the
+ * native pill can be hidden (scrollbar-width: none, iOS 18.2+), so no-JS and
+ * older iOS keep the system indicator rather than losing both. The non-auto
+ * scrollbar-width here can't leak to desktop engines (see the @supports note
+ * above) because the attribute is only ever set on iOS.
+ */
+html[data-ios-scrollbar] {
+  scrollbar-width: none;
+}
+
+/*
+ * Invisible fixed rail for the JS thumb, on the physical right edge — where
+ * the native iOS indicator and (per Chromium, even for dir=rtl) the classic
+ * root scrollbar both sit. Height/transform/opacity are driven per-frame by
+ * the component; reduced-motion users get an instant fade via the global
+ * transition clamp below.
+ */
+.ios-scrollbar {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 3px;
+  width: 4px;
+  pointer-events: none;
+  z-index: 50;
+}
+
+.ios-scrollbar-thumb {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  border-radius: 999px;
+  background-color: var(--red);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  will-change: transform;
+}
+
+/*
  * Pages that paint a full-bleed cream2 backdrop from the sm breakpoint up
  * (survey, thanks) mirror it on the canvas, so the scrollbar gutter and
  * overscroll show cream2 instead of the default paper body.

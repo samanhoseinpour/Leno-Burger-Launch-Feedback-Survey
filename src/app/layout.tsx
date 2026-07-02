@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Vazirmatn, Archivo_Black, JetBrains_Mono } from "next/font/google";
+import { IosScrollIndicator } from "@/components/IosScrollIndicator";
 import "./globals.css";
 
 // Vazirmatn — all Persian body/UI text (variable weight range).
@@ -45,7 +46,10 @@ export default function RootLayout({
       dir="rtl"
       className={`${vazirmatn.variable} ${archivoBlack.variable} ${jetbrainsMono.variable}`}
     >
-      <body className="min-h-dvh">{children}</body>
+      <body className="min-h-dvh">
+        {children}
+        <IosScrollIndicator />
+      </body>
     </html>
   );
 }
