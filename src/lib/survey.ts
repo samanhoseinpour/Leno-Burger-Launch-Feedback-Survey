@@ -3,8 +3,11 @@
 // "fix" it. The form is rendered data-driven from this config.
 //
 // Rating scales are ordered most-negative → most-positive. The STORED value is
-// the array index + 1 (index 0 = 1, index 4 = 5). This mapping is fixed and
-// independent of RTL, which only flips the visual order.
+// the array index + 1 (index 0 = 1, index 4 = 5). This mapping is fixed. The
+// UI renders the options REVERSED — most-positive first, i.e. rightmost in RTL
+// where reading starts (deliberate UX choice, 2026-07-03; supersedes SPEC's
+// "index 0 rightmost"). Reordering is display-only and must never touch the
+// stored score: «خیلی خوب» is 5 wherever it appears on screen.
 
 export const SCALE_QUALITY = [
   "خیلی ضعیف",

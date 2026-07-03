@@ -93,28 +93,38 @@ export function AdminDashboard({ responses }: { responses: Response[] }) {
             </div>
 
             <div className="mt-4 flex gap-1.5">
-              {stat.distribution.map((count, i) => {
-                const max = Math.max(1, ...stat.distribution);
-                return (
-                  <div
-                    key={i}
-                    className="flex flex-1 flex-col items-center gap-1.5"
-                  >
-                    <span className="text-xs tabular-nums text-muted">
-                      {toPersianDigits(count)}
-                    </span>
-                    <div className="flex h-14 w-full items-end">
-                      <div
-                        className="w-full rounded-t-md bg-brand/70"
-                        style={{ height: `${(count / max) * 100}%` }}
-                      />
+              {/* Same order as the survey options: most-positive first
+                  (rightmost in RTL). `distribution[i]` counts stored value
+                  i + 1, so pair count↔label↔score before reversing. */}
+              {stat.distribution
+                .map((count, i) => ({
+                  count,
+                  score: i + 1,
+                  label: question.scale[i],
+                }))
+                .reverse()
+                .map(({ count, score, label }) => {
+                  const max = Math.max(1, ...stat.distribution);
+                  return (
+                    <div
+                      key={score}
+                      className="flex flex-1 flex-col items-center gap-1.5"
+                    >
+                      <span className="text-xs tabular-nums text-muted">
+                        {toPersianDigits(count)}
+                      </span>
+                      <div className="flex h-14 w-full items-end">
+                        <div
+                          className="w-full rounded-t-md bg-brand/70"
+                          style={{ height: `${(count / max) * 100}%` }}
+                        />
+                      </div>
+                      <span className="text-center text-[10px] leading-tight text-muted">
+                        {label}
+                      </span>
                     </div>
-                    <span className="text-center text-[10px] leading-tight text-muted">
-                      {question.scale[i]}
-                    </span>
-                  </div>
-                );
-              })}
+                  );
+                })}
             </div>
           </div>
         ))}

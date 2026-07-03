@@ -13,8 +13,10 @@ type RatingQuestionProps = {
 };
 
 // A 5-point rating as a real radio group (fieldset/legend). Each option's value
-// is its array index + 1, so the stored score never depends on visual position.
-// In RTL the row flips visually — index 0 renders rightmost — but value is fixed.
+// is its canonical scale-array index + 1, so the stored score never depends on
+// visual position. Options render most-positive FIRST — in RTL that puts
+// «خیلی خوب» rightmost, where reading starts — but the value↔label binding is
+// fixed: reversing here changes display order only, never the stored score.
 export function RatingQuestion({
   id,
   number,
@@ -51,11 +53,12 @@ export function RatingQuestion({
       </legend>
 
       <div className="flex items-start justify-between gap-1 sm:gap-2">
-        {scale.map((label, index) => {
-          const value = index + 1;
-          return (
+        {scale
+          .map((label, index) => ({ label, value: index + 1 }))
+          .reverse()
+          .map(({ label, value }) => (
             <label
-              key={index}
+              key={value}
               className="group flex min-w-0 flex-1 cursor-pointer flex-col items-center gap-2 rounded-xl py-1"
             >
               <input
@@ -103,8 +106,7 @@ export function RatingQuestion({
                 {label}
               </span>
             </label>
-          );
-        })}
+          ))}
       </div>
 
       {error && (
