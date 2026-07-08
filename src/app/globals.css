@@ -27,12 +27,19 @@
   --paper: var(--color-paper);
   --muted: var(--color-muted);
   --line: var(--color-line);
+
+  /* Height of the sticky <SiteNav>; single source of truth so the bar height
+   * and the scroll offset that clears it (below) can never drift apart. */
+  --nav-h: 4rem;
 }
 
 @layer base {
   html {
     color-scheme: light;
     -webkit-text-size-adjust: 100%;
+    /* Keep in-page anchors and focus targets (e.g. the skip link → #main)
+     * clear of the sticky nav instead of hidden underneath it. */
+    scroll-padding-top: var(--nav-h);
   }
 
   body {

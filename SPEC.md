@@ -60,10 +60,10 @@ Wordmark: **Leno** in Archivo Black next to the badge.
 
 **Header**
 
-- Tag chip: `افتتاحیه`
-- Title (h1): `نخستین تجربه‌ی شما چگونه بود؟`
+- Title (h1): `تجربه‌ی شما در لنو چگونه بود؟`
 - Subtitle: `حضور شما مایه‌ی افتخار ماست؛ چند لحظه وقت بگذارید و نظر ارزشمندتان را با ما در میان بگذارید.`
 - Instruction line: `لطفاً دایرهٔ گزینه‌ای که با نظر شما همخوانی دارد را پر کنید.` ("fill in the circle" — matches the tap-to-fill interaction)
+- No tag chip — the launch-day `افتتاحیه` badge was removed once the opening passed; the header shows just the Leno logo.
 
 **Rating questions** — 5-point scale, one selectable filled circle per option. **Stored value = array index + 1**, so index 0 (the most-negative label, e.g. `خیلی ضعیف`) = 1 and index 4 (the most-positive, e.g. `خیلی خوب`) = 5 — this mapping is fixed and independent of visual position. RTL only flips the _visual_ order (index 0 renders rightmost, index 4 leftmost); do not let the layout change the score.
 
@@ -109,7 +109,7 @@ const QUESTIONS = [
 
 **Footer / thank-you copy**
 
-- `از اینکه در روز گشایش، مهمان لنو بودید سپاسگزاریم.`
+- `از اینکه مهمان لنو بودید سپاسگزاریم.`
 - `مشتاقانه در انتظار دیدار دوباره‌ی شما هستیم. — با احترام، مجموعه‌ی لنو`
 
 ## Data model (Prisma)

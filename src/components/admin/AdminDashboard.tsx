@@ -4,6 +4,7 @@ import { Brand } from '@/components/Brand';
 import { summarizeAll } from '@/lib/stats';
 import { toPersianDigits } from '@/lib/format';
 import { QUESTIONS } from '@/lib/survey';
+import { SITE_COPY } from '@/lib/site';
 import { OrderNoteCell } from '@/components/admin/OrderNoteCell';
 import { adminLogout } from '@/app/admin/actions';
 
@@ -29,7 +30,7 @@ export function AdminDashboard({ responses }: { responses: Response[] }) {
             href="/"
             className="rounded-full border border-line px-4 py-2 text-sm text-ink transition hover:border-brand hover:text-brand"
           >
-            بازگشت به نظرسنجی
+            {SITE_COPY.backHome}
           </Link>
           <form action={adminLogout}>
             <button

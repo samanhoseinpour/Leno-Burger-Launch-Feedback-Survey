@@ -1,8 +1,10 @@
 'use client';
 
 import { useActionState, useState, startTransition } from 'react';
+import Link from 'next/link';
 import { submitFeedback, type SubmitState } from '@/app/actions';
 import { COPY, UI_COPY, QUESTIONS, ORDER_QUESTION_NUMBER } from '@/lib/survey';
+import { SITE_COPY } from '@/lib/site';
 import {
   FeedbackSchema,
   feedbackFromFormData,
@@ -39,8 +41,20 @@ export function SurveyForm() {
   const [errors, setErrors] = useState<FieldErrors>({});
 
   // On success, swap the whole form for the thank-you (also blocks re-submits).
+  // Offer a link back to the home hub so a guest can head to the menu next.
   if (state.status === 'success') {
-    return <ThankYou />;
+    return (
+      <ThankYou
+        action={
+          <Link
+            href="/"
+            className="rounded-full border border-line px-5 py-3 text-sm text-ink transition hover:border-brand hover:text-brand"
+          >
+            {SITE_COPY.backHome}
+          </Link>
+        }
+      />
+    );
   }
 
   function clearError(field: FeedbackField) {

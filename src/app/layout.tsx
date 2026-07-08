@@ -26,9 +26,10 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "لنو | نظرسنجی افتتاحیه",
-  description:
-    "حضور شما مایه‌ی افتخار ماست؛ چند لحظه وقت بگذارید و نظر ارزشمندتان را با ما در میان بگذارید.",
+  // Brand-generic default; the survey supplies its own title/description on
+  // /survey, and /menu on /menu. The home page (/) inherits this.
+  title: "لنو",
+  description: "به لنو خوش آمدید — منو و نظرسنجی مجموعه‌ی لنو.",
 };
 
 export const viewport: Viewport = {

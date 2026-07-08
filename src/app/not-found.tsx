@@ -1,32 +1,32 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Brand } from "@/components/Brand";
+import { CenteredPanel } from "@/components/CenteredPanel";
+import { SiteChrome } from "@/components/SiteChrome";
 import { toPersianDigits } from "@/lib/format";
+import { SITE_COPY } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "صفحه پیدا نشد | لنو",
 };
 
-// Global 404 — same centered paper-card shell as /thanks, with the same
-// back-to-survey pill so a lost guest lands back on the form. Copy is
-// interface-voice microcopy (like UI_COPY), not card copy.
+// Global 404. It is rendered by the ROOT layout — NOT the (site) route-group
+// layout — so it can't inherit the shared chrome and self-mounts <SiteChrome>
+// to get the same nav + footer + skip link. Copy is interface-voice microcopy.
 export default function NotFound() {
   return (
-    <main
-      data-canvas="cream2"
-      className="flex min-h-dvh items-center justify-center sm:bg-cream2 sm:px-6 sm:py-10"
-    >
-      <div className="mx-auto w-full max-w-[600px] bg-paper sm:overflow-hidden sm:rounded-[2rem] sm:border sm:border-line sm:shadow-[0_24px_60px_-32px_rgb(90_24_12/0.4)]">
-        <div className="mx-auto flex max-w-md flex-col items-center gap-7 px-5 py-20 text-center">
-          <p className="text-7xl font-bold leading-none tracking-tight text-brand tabular-nums">
+    <SiteChrome>
+      <CenteredPanel>
+        <div className="mx-auto flex max-w-lg flex-col items-center gap-7 px-5 py-20 text-center md:py-24">
+          <p className="text-7xl font-black leading-none tracking-tight text-brand tabular-nums md:text-8xl">
             {toPersianDigits(404)}
           </p>
 
           <div className="space-y-3">
-            <h1 className="text-lg font-bold leading-8 text-ink">
+            <h1 className="text-lg font-bold leading-8 text-ink md:text-2xl">
               صفحه‌ی موردنظر پیدا نشد.
             </h1>
-            <p className="text-sm leading-7 text-muted">
+            <p className="text-sm leading-7 text-muted md:text-base">
               به نظر می‌رسد نشانی واردشده وجود ندارد یا جابه‌جا شده است.
             </p>
           </div>
@@ -35,12 +35,12 @@ export default function NotFound() {
             href="/"
             className="rounded-full border border-line px-5 py-3 text-sm text-ink transition hover:border-brand hover:text-brand"
           >
-            بازگشت به نظرسنجی
+            {SITE_COPY.backHome}
           </Link>
 
           <Brand surface="paper" />
         </div>
-      </div>
-    </main>
+      </CenteredPanel>
+    </SiteChrome>
   );
 }
