@@ -8,6 +8,9 @@ import { SITE_COPY } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "داشبورد | لنو",
+  // Pinned, not inherited: the dashboard stays out of search even after
+  // SEARCH_INDEXING is switched on for the public pages.
+  robots: { index: false, follow: false },
 };
 
 // Always render fresh: this reads the session cookie and the latest responses.

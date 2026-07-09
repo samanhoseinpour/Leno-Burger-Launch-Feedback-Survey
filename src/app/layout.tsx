@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Vazirmatn, Archivo_Black, JetBrains_Mono } from "next/font/google";
 import { IosScrollIndicator } from "@/components/IosScrollIndicator";
+import { NOINDEX_ROBOTS, SEARCH_INDEXING } from "@/lib/seo";
 import "./globals.css";
 
 // Vazirmatn — all Persian body/UI text (variable weight range).
@@ -30,6 +31,9 @@ export const metadata: Metadata = {
   // /survey, and /menu on /menu. The home page (/) inherits this.
   title: "لنو",
   description: "به لنو خوش آمدید — منو و نظرسنجی مجموعه‌ی لنو.",
+  // Inherited by every page, so the whole site stays out of search while we are
+  // on a temporary domain. Child pages that set `robots` override this.
+  robots: SEARCH_INDEXING ? undefined : NOINDEX_ROBOTS,
 };
 
 export const viewport: Viewport = {
