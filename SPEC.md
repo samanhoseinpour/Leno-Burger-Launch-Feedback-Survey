@@ -13,7 +13,7 @@ This replaces a printed A4 feedback card — keep the brand identity, but **adap
 
 - **Next.js (latest stable — 16.x, App Router) + React 19 + TypeScript**. Scaffold with `npx create-next-app@latest`. Requires **Node.js 20+**. Turbopack is the default bundler in 16 (no `--turbopack` flag needed); don't add a custom webpack config.
 - **Tailwind CSS** for styling (define brand tokens in the Tailwind config + CSS variables)
-- **Prisma** ORM. Dev DB: **SQLite**. Production: **Postgres** (Vercel Postgres / Supabase / Neon) — write the schema so switching the datasource `provider` is the only change. ⚠️ Do not ship SQLite to Vercel serverless (no persistent disk).
+- **Prisma** ORM with **Postgres (Neon) in every environment**. ⚠️ SQLite is never used — Vercel serverless has no persistent disk. (This spec originally called for SQLite in dev; running one engine everywhere removes a class of dev/prod drift, so the datasource `provider` is `postgresql` throughout.)
 - **next/font/google** for fonts (no CDN `<link>` tags)
 - **Server Actions** for the form submit (use `useActionState` for pending/errors); Route Handler only for the CSV export. No client-side data-fetching library.
 - Deployable to **Vercel**
@@ -133,21 +133,36 @@ model Response {
 
 ## Pages & routes
 
-1. **`/` — the survey** (public, mobile-first)
+The four public pages share the site chrome — a sticky RTL nav and a slim footer —
+through the `(site)` route group. `/admin` sits **outside** that group on purpose, so
+it never inherits the chrome and stays a self-contained staff surface.
+
+1. **`/` — home hub** (public): the Leno hero plus two cards, one to the menu and one to the survey.
+2. **`/menu`** (public): a branded "coming soon" placeholder until the real menu is ready.
+3. **`/survey` — the survey** (public, mobile-first)
    - Header band, instruction, the 6 rating questions, Q7 textarea, optional contact fields, submit button (`ثبت نظر`).
-   - Client-side: track selected value per question; submit posts to the server.
-   - On success → **thank-you state** (route to `/thanks` or swap in place) showing the footer copy and a checkmark; do not allow duplicate resubmits of the same filled form.
-2. **`/thanks`** — standalone thank-you screen (in case of redirect).
-3. **`/admin` — protected dashboard**
-   - Gate with a single `ADMIN_PASSWORD` env var (simple login form → httpOnly cookie, or Basic Auth via middleware). No user accounts.
+   - Client-side: track selected value per question; submit posts to the server via a Server Action.
+   - On success the form **swaps in place** for the thank-you state (footer copy + checkmark), which also blocks duplicate resubmits; the button is disabled while pending.
+4. **`/thanks`** — the same thank-you screen as a standalone route.
+5. **`/admin` — protected dashboard**
+   - Gate with a single `ADMIN_PASSWORD` env var (login form → httpOnly cookie). No user accounts.
    - Show: total responses; **average score per question** (with the Persian question text + a 0–5 bar); a **distribution bar** per question (count per option); a **table** of Q7 write-ins with name/phone and timestamp.
    - **Export CSV** button (UTF-8 with BOM so Persian opens correctly in Excel).
+   - Because the site nav does not render here, the **login screen and the dashboard each carry their own "بازگشت به خانه" link** back to `/`.
 
 ## Behavior & validation
 
-- Ratings are **optional but encouraged**; do not hard-block submit if some are blank (launch-day guests skip). Q7 and contact are optional. Reject a fully-empty submission with a gentle inline message.
-- Normalize phone digits (Persian ۰۹… / Arabic → Latin `09…`); light format check, no hard rejection.
-- Prevent double-submit (disable button + guard).
+Validation lives in `src/lib/validation.ts` (Zod). The **same schema runs on the client**
+(instant inline errors) **and on the server** (the source of truth), so the two cannot drift.
+
+- Ratings **q1–q6 are required** (1–5), each with a gentle inline message when unanswered.
+  ⚠️ This is a deliberate override of this spec's original "ratings are optional, never
+  hard-block" rule — an incomplete response is worth much less than a complete one, and in
+  practice guests do finish all six. **Do not revert it to optional.**
+- Q7 (`orderNote`) and `name` stay **optional** free text, with generous length caps.
+- `phone` is **optional**, but a non-empty value must normalize to a valid Iranian mobile
+  (`09xxxxxxxxx`). Persian ۰۹… / Arabic digits are normalized to Latin first. Empty is fine.
+- Prevent double-submit (disable button while pending + swap the form for the thank-you).
 - Store `userAgent`; do **not** store IP or any tracking.
 - Graceful server error state with a retry.
 
@@ -158,16 +173,37 @@ model Response {
 - **Accessible**: rating groups are proper radio groups with labels, keyboard operable, visible focus, `aria` on the SVG-only badge.
 - Fast: fonts via `next/font` with `display: swap`; no layout shift; Lighthouse ≥ 90 on mobile.
 - Clean component structure, e.g. `SurveyForm`, `RatingQuestion`, `TextQuestion`, `ContactFields`, `Brand`, `admin/*`.
-- README with: env vars (`DATABASE_URL`, `ADMIN_PASSWORD`), `prisma migrate` + seed steps, local run, and the one-line change to move from SQLite to Postgres for deploy.
+- README with: env vars (`DATABASE_URL`, `ADMIN_PASSWORD`), `prisma migrate` + seed steps, and local run.
+
+## Search indexing
+
+The site currently runs on a **temporary domain**, so **no page may appear in Google.**
+`src/lib/seo.ts` holds the single switch, `SEARCH_INDEXING = false`. Two layers read it:
+
+- `src/app/layout.tsx` → `<meta name="robots" content="noindex, nofollow, nocache">` (plus a
+  `googlebot` variant with `noimageindex`) on every HTML page, inherited by all routes.
+- `next.config.ts` → an `X-Robots-Tag: noindex, nofollow` response header on **every** route.
+  This is what covers responses with no `<head>`, such as the CSV export.
+
+`src/app/robots.ts` **allows** crawling and deliberately does not read the flag. A `Disallow: /`
+would stop crawlers from fetching a page, so they would never read its `noindex` — and Google
+can still list a disallowed URL it finds via a link. Allowing the fetch is what makes the
+`noindex` effective.
+
+`/admin` pins `robots: { index: false, follow: false }` on its own metadata, so it stays out of
+search even after the flag is switched on.
+
+**To launch on the real domain:** set `SEARCH_INDEXING = true` and redeploy. Nothing else changes.
 
 ## Definition of done
 
-- `npm run dev` serves the survey at `/`, submitting writes a row and shows the thank-you.
+- `npm run dev` serves the site on **port 3001**; the survey lives at `/survey`, and submitting writes a row and shows the thank-you.
 - `/admin` (behind the password) shows live averages, distributions, write-ins, and exports a correct Persian CSV.
 - App is fully RTL, uses the exact brand tokens/fonts/logo and **verbatim** Persian copy above, and deploys to Vercel with Postgres.
+- No page is indexable while `SEARCH_INDEXING` is `false`.
 
 ## Stretch (only after the above works)
 
-- QR-code generator page for the table tents (points to `/`).
+- QR-code generator page for the table tents (points to `/survey`).
 - Per-question average trend over time on the dashboard.
 - Optional Google Sheets mirror of each response.

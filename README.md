@@ -36,17 +36,18 @@ npx prisma migrate deploy   # applies migrations to your Postgres database
 npm run db:seed             # optional: sample responses so /admin has data
 
 # 4. Run it
-npm run dev                 # http://localhost:3000
+npm run dev                 # http://localhost:3001
 ```
 
-Fill in the survey at `/` — a submission writes a row and shows the thank-you
-screen. Review results at `/admin` (enter your `ADMIN_PASSWORD`).
+Open [http://localhost:3001](http://localhost:3001) for the home hub. The survey is at
+`/survey` — a submission writes a row and swaps in the thank-you screen. Review results at
+`/admin` (enter your `ADMIN_PASSWORD`).
 
 ## Scripts
 
 | Script | Purpose |
 | --- | --- |
-| `npm run dev` | Start the development server |
+| `npm run dev` | Start the development server on port 3001 |
 | `npm run build` | Production build (runs `prisma generate` + `prisma migrate deploy` first) |
 | `npm run start` | Serve the production build |
 | `npm run lint` | Run ESLint |
@@ -65,6 +66,26 @@ and distribution per question, and the free-text write-ins, plus a **CSV export*
 
 Only the browser `userAgent` is stored with each response. No IP address and no
 tracking are collected.
+
+## Search indexing (currently OFF)
+
+The site runs on a temporary domain, so **no page may show up in Google.**
+[`src/lib/seo.ts`](./src/lib/seo.ts) holds the single switch, `SEARCH_INDEXING = false`,
+and two layers read it:
+
+| Layer | File | Covers |
+| --- | --- | --- |
+| `<meta name="robots">` | `src/app/layout.tsx` | every HTML page, by inheritance |
+| `X-Robots-Tag` header | `next.config.ts` | every route, including the CSV export (no `<head>`) |
+
+`robots.txt` (from [`src/app/robots.ts`](./src/app/robots.ts)) **allows** crawling, on purpose.
+A `Disallow: /` would stop crawlers from fetching the pages, so they would never read the
+`noindex` — and Google can still list a disallowed URL it discovers through a link, as a bare
+title-less result. Letting them fetch and read the `noindex` is the only combination that
+reliably keeps pages out of the index. `/admin` pins its own `noindex` so it stays hidden even
+after the site opens up.
+
+**To launch on the real domain:** set `SEARCH_INDEXING = true` and redeploy. Nothing else changes.
 
 ## Deploying to Vercel (Neon Postgres)
 
@@ -89,6 +110,10 @@ The datasource is already Postgres — no code change needed. SQLite is never us
   independent of the RTL visual order.
 - Question numbers render as Persian digits via `toPersianDigits()`; phone numbers
   are normalized (Persian/Arabic digits → Latin `09…`) via `normalizePhone()`.
+- The six ratings are **required**; the write-in, name and phone are optional (a
+  non-empty phone must be a valid Iranian mobile). One Zod schema in
+  [`src/lib/validation.ts`](./src/lib/validation.ts) runs on both the client and the
+  server, so the two can never drift.
 
 ## Project structure
 
@@ -96,17 +121,27 @@ The datasource is already Postgres — no code change needed. SQLite is never us
 prisma/
   schema.prisma        # Response model; provider = postgresql (Neon)
   seed.mjs             # sample responses
+next.config.ts         # X-Robots-Tag noindex header on every route
 src/
   app/
-    page.tsx           # the survey
+    layout.tsx         # lang="fa" dir="rtl", fonts, <meta name="robots">
+    robots.ts          # /robots.txt — allows crawling on purpose (see above)
     actions.ts         # submitFeedback Server Action
-    thanks/            # standalone thank-you screen
+    (site)/            # PUBLIC pages, wrapped in the shared nav + footer chrome
+      page.tsx         #   / — home hub
+      menu/            #   /menu — "coming soon" placeholder
+      survey/          #   /survey — the survey
+      thanks/          #   /thanks — standalone thank-you screen
     admin/             # password-gated dashboard + login/logout actions
+                       #   (outside (site): no public chrome)
     api/admin/export/  # CSV Route Handler (UTF-8 + BOM)
-  components/          # SurveyForm, RatingQuestion, Brand, admin/*, …
+  components/          # SurveyForm, RatingQuestion, Brand, SiteChrome, admin/*, …
   lib/
-    survey.ts          # verbatim copy + questions/scales (source of truth)
+    survey.ts          # verbatim survey copy + questions/scales (source of truth)
+    site.ts            # site-chrome copy + nav items
+    validation.ts      # one Zod schema, shared by client and server
     format.ts          # toPersianDigits, normalizePhone
+    seo.ts             # SEARCH_INDEXING switch + noindex directives
     prisma.ts          # PrismaClient singleton
     auth.ts            # admin session helpers
     stats.ts           # dashboard aggregation
