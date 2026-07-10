@@ -7,7 +7,7 @@ import { MenuCategoryRail } from "@/components/menu/MenuCategoryRail";
 import { MenuGlyph } from "@/components/menu/MenuGlyph";
 import { formatPercent, formatToman } from "@/lib/format";
 import { resolveIconSlug } from "@/lib/menu-icons";
-import { discountedToman } from "@/lib/menu-price";
+import { discountedToman, roundedOriginalToman } from "@/lib/menu-price";
 import { prisma } from "@/lib/prisma";
 import { MENU_COPY } from "@/lib/site";
 
@@ -179,7 +179,7 @@ function MenuRow({
           {finalPrice != null && (
             <p className="whitespace-nowrap text-xs tabular-nums text-muted">
               <span className="sr-only">{MENU_COPY.priceBefore}: </span>
-              <s>{formatToman(item.priceToman)}</s>
+              <s>{formatToman(roundedOriginalToman(item.priceToman))}</s>
             </p>
           )}
         </div>

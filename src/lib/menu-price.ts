@@ -26,3 +26,15 @@ export function discountedToman(
   }
   return Math.round((price * (100 - percent)) / 100);
 }
+
+/**
+ * The struck-through original as the GUEST menu displays it. Owners back-compute
+ * originals from a round pay price (580,000 at 25% off stores 773,333), so the
+ * stored figure can carry thirds; the strikethrough is marketing, not a receipt,
+ * and shows the nearest 1,000 Toman. Display-only: the admin keeps showing the
+ * stored figure, and what a guest pays is never rounded — that stays
+ * `discountedToman()` over the exact `priceToman`.
+ */
+export function roundedOriginalToman(price: number): number {
+  return Math.round(price / 1000) * 1000;
+}
