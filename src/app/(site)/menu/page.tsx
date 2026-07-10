@@ -8,6 +8,7 @@ import { MenuGlyph } from "@/components/menu/MenuGlyph";
 import { formatPercent, formatToman } from "@/lib/format";
 import { resolveIconSlug } from "@/lib/menu-icons";
 import { menuImageSrc } from "@/lib/menu-images";
+import { isChefPick } from "@/lib/menu-picks";
 import { discountedToman, roundedOriginalToman } from "@/lib/menu-price";
 import { prisma } from "@/lib/prisma";
 import { MENU_COPY } from "@/lib/site";
@@ -139,7 +140,7 @@ function MenuRow({
           render at the same `size-16`, because a category can mix rows with
           and without a photo and the text column must stay aligned. */}
       {imageSrc ? (
-        // eslint-disable-next-line @next/next/no-img-element -- a pre-sized 320px static JPEG; next/image would put a client runtime and the image optimizer between a guest and a 17 KB file
+        // eslint-disable-next-line @next/next/no-img-element -- a pre-sized 320px static AVIF; next/image would put a client runtime and the image optimizer between a guest and a 13 KB file
         <img
           src={imageSrc}
           alt=""
@@ -164,8 +165,14 @@ function MenuRow({
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-2">
           <h3 className="font-bold text-ink">{item.name}</h3>
-          {/* An item can be discounted AND sold out, so the two pills must not
-              look alike: the offer is solid, the bad news is soft. */}
+          {/* Pills can stack on one row (a pick can be discounted, a discounted
+              row can sell out), so good news — the pick, the offer — is solid
+              and the bad news stays soft. */}
+          {isChefPick(item.name) && (
+            <span className="inline-flex items-center rounded-full bg-brand px-2.5 py-0.5 text-[0.7rem] font-bold text-cream">
+              {MENU_COPY.chefPick}
+            </span>
+          )}
           {finalPrice != null && item.discountPercent != null && (
             <span className="inline-flex items-center rounded-full bg-brand px-2.5 py-0.5 text-[0.7rem] font-bold text-cream">
               {formatPercent(item.discountPercent)} {MENU_COPY.discount}

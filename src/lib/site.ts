@@ -34,6 +34,7 @@ export const MENU_COPY = {
   railLabel: "دسته‌بندی‌های منو",
   soldOut: "ناموجود",
   discount: "تخفیف",
+  chefPick: "پیشنهاد سرآشپز",
   // sr-only, so the struck-through number is announced for what it is.
   priceBefore: "قیمت پیش از تخفیف",
   priceUnit: "تومان",

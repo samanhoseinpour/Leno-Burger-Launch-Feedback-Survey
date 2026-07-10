@@ -5,19 +5,23 @@
 // back to its icon tile — a miss is a fallback, never an error. When images
 // become a real `MenuItem` field this file is the list to migrate.
 //
-// The files are 320×320 JPEGs cut from the owner's sprite sheet. They sit on
-// the sprite's own flat white background (no alpha), which is why the tile
-// that renders one is `bg-white`, not the cream icon tile.
+// The files are 320×320 AVIFs: the dishes cut from the owner's sprite sheet,
+// the drinks from standalone product shots. All sit on a flat white
+// background (no alpha), which is why the tile that renders one is
+// `bg-white`, not the cream icon tile.
 
 const MENU_IMAGES: Record<string, string> = {
-  "کلاسیک": "/menu/classic.jpg",
-  "اوکلاهاما": "/menu/oklahoma.jpg",
-  "چیز برگر": "/menu/cheese.jpg",
-  "رویال برگر": "/menu/royal.jpg",
-  "ماشروم برگر": "/menu/mushroom.jpg",
-  "چوریتسو برگر": "/menu/chorizo.jpg",
-  "هات داگ ویژه": "/menu/hotdog-special.jpg",
-  "هات داگ": "/menu/hotdog.jpg",
+  "کلاسیک": "/menu/classic.avif",
+  "اوکلاهاما": "/menu/oklahoma.avif",
+  "چیز برگر": "/menu/cheese.avif",
+  "رویال برگر": "/menu/royal.avif",
+  "ماشروم برگر": "/menu/mushroom.avif",
+  "چوریتسو برگر": "/menu/chorizo.avif",
+  "هات داگ ویژه": "/menu/hotdog-special.avif",
+  "هات داگ": "/menu/hotdog.avif",
+  "نوشابه کوکاکولا": "/menu/coca-cola.avif",
+  "نوشابه اسپرایت": "/menu/sprite.avif",
+  "آب معدنی": "/menu/water.avif",
 };
 
 // Trim + collapse whitespace so a name retyped in the admin form with a stray
