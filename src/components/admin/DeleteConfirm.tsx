@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ADMIN_COPY } from "@/lib/menu-copy";
+import { MENU_ADMIN_COPY } from "@/lib/menu-copy";
 
 // A two-step delete. This was a native <details>, which owned the open/closed
 // state for free — but <details> only ever toggles: it cannot dismiss on an
@@ -56,7 +56,7 @@ export function DeleteConfirm({
         onClick={() => setOpen((wasOpen) => !wasOpen)}
         className="inline-flex min-h-11 cursor-pointer items-center rounded-lg px-2 text-xs font-semibold text-muted transition hover:text-brand aria-expanded:text-brand"
       >
-        {ADMIN_COPY.delete}
+        {MENU_ADMIN_COPY.delete}
       </button>
 
       {/* Anchored to the row so the confirmation never pushes the list around. */}
@@ -69,7 +69,7 @@ export function DeleteConfirm({
               type="submit"
               className="inline-flex min-h-11 w-full cursor-pointer items-center justify-center rounded-lg bg-brand px-3 text-xs font-bold text-cream transition active:scale-[0.99]"
             >
-              {ADMIN_COPY.confirmYes}
+              {MENU_ADMIN_COPY.confirmYes}
             </button>
           </form>
         </div>
