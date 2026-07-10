@@ -1,12 +1,8 @@
 import type { Response } from '@prisma/client';
-import Link from 'next/link';
-import { Brand } from '@/components/Brand';
 import { summarizeAll } from '@/lib/stats';
 import { toPersianDigits } from '@/lib/format';
 import { QUESTIONS } from '@/lib/survey';
-import { SITE_COPY } from '@/lib/site';
 import { OrderNoteCell } from '@/components/admin/OrderNoteCell';
-import { adminLogout } from '@/app/admin/actions';
 
 const dateFormatter = new Intl.DateTimeFormat('fa-IR', {
   dateStyle: 'short',
@@ -14,35 +10,14 @@ const dateFormatter = new Intl.DateTimeFormat('fa-IR', {
   timeZone: 'Asia/Tehran',
 });
 
-export function AdminDashboard({ responses }: { responses: Response[] }) {
+// The survey half of the admin panel. The masthead, tabs and page column belong
+// to <AdminShell>, which wraps this.
+export function SurveyDashboard({ responses }: { responses: Response[] }) {
   const total = responses.length;
   const perQuestion = summarizeAll(responses);
 
   return (
-    <main className="mx-auto max-w-2xl px-5 pb-8 pt-4">
-      <header className="sticky top-0 z-10 -mx-5 flex items-center justify-between gap-4 border-b border-line bg-paper px-5 py-4">
-        <div>
-          <Brand surface="paper" />
-          <p className="mt-2 text-sm text-muted">داشبورد نظرسنجی</p>
-        </div>
-        <div className="flex flex-wrap justify-end gap-2">
-          <Link
-            href="/"
-            className="rounded-full border border-line px-4 py-2 text-sm text-ink transition hover:border-brand hover:text-brand"
-          >
-            {SITE_COPY.backHome}
-          </Link>
-          <form action={adminLogout}>
-            <button
-              type="submit"
-              className="rounded-full border border-line px-4 py-2 text-sm text-muted transition hover:border-brand hover:text-brand cursor-pointer"
-            >
-              خروج
-            </button>
-          </form>
-        </div>
-      </header>
-
+    <>
       <section className="mt-6 flex items-stretch gap-3">
         <div className="flex flex-1 items-center gap-3 rounded-2xl bg-brand px-5 py-4 text-cream">
           <span className="text-3xl font-bold tabular-nums">
@@ -213,6 +188,6 @@ export function AdminDashboard({ responses }: { responses: Response[] }) {
           </div>
         )}
       </section>
-    </main>
+    </>
   );
 }

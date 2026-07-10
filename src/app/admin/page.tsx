@@ -1,55 +1,46 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { AdminLoginScreen } from "@/components/admin/AdminLoginScreen";
+import { AdminShell } from "@/components/admin/AdminShell";
+import { NavCard } from "@/components/NavCard";
+import { FeedbackIcon, MenuIcon } from "@/components/icons";
 import { isAdmin } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import { AdminLogin } from "@/components/admin/AdminLogin";
-import { AdminDashboard } from "@/components/admin/AdminDashboard";
-import { SITE_COPY } from "@/lib/site";
+import { ADMIN_COPY } from "@/lib/menu-copy";
 
 export const metadata: Metadata = {
-  title: "داشبورد | لنو",
-  // Pinned, not inherited: the dashboard stays out of search even after
+  title: "پنل مدیریت | لنو",
+  // Pinned, not inherited: the admin area stays out of search even after
   // SEARCH_INDEXING is switched on for the public pages.
   robots: { index: false, follow: false },
 };
 
-// Always render fresh: this reads the session cookie and the latest responses.
+// Always render fresh: this reads the session cookie.
 export const dynamic = "force-dynamic";
 
+// The section picker. Also the post-login landing page (`adminLogin` redirects
+// here), so it must render the login screen when the session is missing.
 export default async function AdminPage() {
-  if (!(await isAdmin())) {
-    return (
-      <main className="mx-auto flex min-h-dvh max-w-sm flex-col items-center justify-center gap-5 px-5 py-10">
-        <AdminLogin />
-        {/* /admin is outside the (site) route group, so no SiteNav renders here.
-            Without this the only way back to the public site is editing the URL.
-            Same pill as the dashboard header; the chevron points right — the
-            "back" direction in RTL. */}
-        <Link
-          href="/"
-          className="group inline-flex min-h-11 items-center gap-2 rounded-full border border-line px-4 text-sm text-muted transition hover:border-brand hover:text-brand"
-        >
-          <svg
-            aria-hidden="true"
-            viewBox="0 0 24 24"
-            className="size-4 shrink-0 transition group-hover:translate-x-0.5"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={2.5}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M9 18l6-6-6-6" />
-          </svg>
-          {SITE_COPY.backHome}
-        </Link>
-      </main>
-    );
-  }
+  if (!(await isAdmin())) return <AdminLoginScreen />;
 
-  const responses = await prisma.response.findMany({
-    orderBy: { createdAt: "desc" },
-  });
+  return (
+    <AdminShell active={null} subtitle={ADMIN_COPY.hub.title}>
+      <p className="mt-6 text-sm leading-7 text-muted">
+        {ADMIN_COPY.hub.subtitle}
+      </p>
 
-  return <AdminDashboard responses={responses} />;
+      <div className="mt-4 flex flex-col gap-4">
+        <NavCard
+          href="/admin/survey"
+          title={ADMIN_COPY.hub.survey.title}
+          description={ADMIN_COPY.hub.survey.desc}
+          icon={<FeedbackIcon />}
+        />
+        <NavCard
+          href="/admin/menu"
+          title={ADMIN_COPY.hub.menu.title}
+          description={ADMIN_COPY.hub.menu.desc}
+          icon={<MenuIcon />}
+        />
+      </div>
+    </AdminShell>
+  );
 }

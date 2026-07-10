@@ -74,7 +74,13 @@ export const FeedbackSchema = z.object({
 export type FeedbackInput = z.input<typeof FeedbackSchema>;
 export type FeedbackData = z.output<typeof FeedbackSchema>;
 export type FeedbackField = keyof FeedbackData;
-export type FieldErrors = Partial<Record<FeedbackField, string>>;
+
+// Generic over the field union so the menu forms can reuse the flattener below.
+// The default keeps every existing `FieldErrors` / `fieldErrorsOf(...)` call site
+// resolving to the feedback fields, unchanged.
+export type FieldErrors<F extends string = FeedbackField> = Partial<
+  Record<F, string>
+>;
 
 /** Pull the raw survey fields out of a submitted FormData (client + server). */
 export function feedbackFromFormData(formData: FormData) {
@@ -96,12 +102,14 @@ export function feedbackFromFormData(formData: FormData) {
 }
 
 /** Flatten a ZodError into `{ field: firstMessage }` for inline display. */
-export function fieldErrorsOf(error: z.ZodError): FieldErrors {
-  const out: FieldErrors = {};
+export function fieldErrorsOf<F extends string = FeedbackField>(
+  error: z.ZodError,
+): FieldErrors<F> {
+  const out: FieldErrors<F> = {};
   for (const issue of error.issues) {
     const key = issue.path[0];
     if (typeof key === "string" && !(key in out)) {
-      out[key as FeedbackField] = issue.message;
+      out[key as F] = issue.message;
     }
   }
   return out;

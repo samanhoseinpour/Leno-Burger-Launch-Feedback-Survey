@@ -6,6 +6,10 @@ import Link from "next/link";
 // PURPOSEFUL glyph per destination (utensils, feedback) — deliberately NOT the
 // Leno mark, which the nav/hero/footer already carry, so the badge isn't reused
 // as a generic bullet.
+//
+// The whole card is one anchor, so nothing interactive may go inside it: an <a>
+// may not contain an <a> or a <button>. The admin section links live in
+// `AdminShell`'s tab row instead, which is why this needs no stretched-link.
 export function NavCard({
   href,
   title,
