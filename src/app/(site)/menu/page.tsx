@@ -7,6 +7,7 @@ import { MenuCategoryRail } from "@/components/menu/MenuCategoryRail";
 import { MenuGlyph } from "@/components/menu/MenuGlyph";
 import { formatPercent, formatToman } from "@/lib/format";
 import { resolveIconSlug } from "@/lib/menu-icons";
+import { menuImageSrc } from "@/lib/menu-images";
 import { discountedToman, roundedOriginalToman } from "@/lib/menu-price";
 import { prisma } from "@/lib/prisma";
 import { MENU_COPY } from "@/lib/site";
@@ -125,6 +126,7 @@ function MenuRow({
   categoryIcon: string | null;
 }) {
   const finalPrice = discountedToman(item.priceToman, item.discountPercent);
+  const imageSrc = menuImageSrc(item.name);
 
   return (
     <li
@@ -132,15 +134,32 @@ function MenuRow({
         item.available ? "" : "opacity-60"
       }`}
     >
-      {/* Decorative: the dish name sits right beside it, so the glyph adds no
-          information a screen reader needs. `size-11` is also the 44px tap-target
-          floor, which keeps the row comfortable to read on a phone. */}
-      <span
-        aria-hidden="true"
-        className="grid size-11 shrink-0 place-items-center rounded-2xl bg-cream2 text-brand"
-      >
-        <MenuGlyph slug={resolveIconSlug(item.icon, categoryIcon)} />
-      </span>
+      {/* Decorative either way: the dish name sits right beside it, so neither
+          the photo nor the glyph adds information a screen reader needs. Both
+          render at the same `size-16`, because a category can mix rows with
+          and without a photo and the text column must stay aligned. */}
+      {imageSrc ? (
+        // eslint-disable-next-line @next/next/no-img-element -- a pre-sized 320px static JPEG; next/image would put a client runtime and the image optimizer between a guest and a 17 KB file
+        <img
+          src={imageSrc}
+          alt=""
+          width={320}
+          height={320}
+          loading="lazy"
+          decoding="async"
+          className="size-16 shrink-0 rounded-2xl border border-line bg-white object-cover"
+        />
+      ) : (
+        <span
+          aria-hidden="true"
+          className="grid size-16 shrink-0 place-items-center rounded-2xl bg-cream2 text-brand"
+        >
+          <MenuGlyph
+            slug={resolveIconSlug(item.icon, categoryIcon)}
+            className="size-8"
+          />
+        </span>
+      )}
 
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-2">
