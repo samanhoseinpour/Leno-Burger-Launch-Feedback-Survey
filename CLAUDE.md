@@ -125,3 +125,7 @@ Brand tokens (CSS variables), the inline three-bar SVG logo, and font roles (**V
 
 - `DATABASE_URL` — the Neon Postgres connection string (locally and in prod).
 - `ADMIN_PASSWORD` — gates `/admin`.
+- `vercel.json` pins `PRISMA_SCHEMA_DISABLE_ADVISORY_LOCK=1` into Vercel builds (and `.env`
+  does the same locally): `DATABASE_URL` points at Neon's **pooler** (PgBouncer), which
+  times out `migrate deploy`'s `pg_advisory_lock` often enough to randomly ERROR a deploy.
+  Keep the variable unless builds move to a direct, non-pooler URL.
