@@ -28,3 +28,32 @@ model Response {
   phone     String?
   userAgent String?
 }
+
+// The public menu, managed from /admin/menu. `sortOrder` is dense (0..n-1) and
+// rewritten wholesale on every reorder, so ties can never wedge the ordering.
+model MenuCategory {
+  id        String     @id @default(cuid())
+  name      String     @unique
+  icon      String? // a MenuIconSlug; null → the fallback glyph
+  sortOrder Int        @default(0)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  items     MenuItem[]
+}
+
+model MenuItem {
+  id          String       @id @default(cuid())
+  name        String
+  description String?
+  priceToman  Int? // whole Tomans; null = price not set yet. Always the ORIGINAL price.
+  discountPercent Int? // 1..99; null = no discount. The discounted price is DERIVED, never stored.
+  icon        String? // a MenuIconSlug; null → inherit the category's icon
+  available   Boolean      @default(true) // false → shown dimmed as «ناموجود»
+  sortOrder   Int          @default(0)
+  categoryId  String
+  category    MenuCategory @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@index([categoryId, sortOrder])
+}

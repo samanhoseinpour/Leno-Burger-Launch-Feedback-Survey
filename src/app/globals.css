@@ -31,6 +31,20 @@
   /* Height of the sticky <SiteNav>; single source of truth so the bar height
    * and the scroll offset that clears it (below) can never drift apart. */
   --nav-h: 4rem;
+
+  /* Same contract for the sticky category rail on /menu: it pins at --nav-h,
+   * and each menu section reserves --nav-h + --rail-h of scroll margin so an
+   * anchored heading lands below both bars instead of behind them.
+   *
+   * 3.5rem = the chip's 44px tap target + 6px of breathing room above and
+   * below. The chip only LOOKS 36px tall; the pill is an inner span. */
+  --rail-h: 3.5rem;
+
+  /* The extra gap an anchored heading leaves under the rail. `MenuCategoryRail`
+   * duplicates this as `ACTIVE_SLOP` and MUST stay larger than it, or a chip
+   * click lands its own section just below the scroll-spy line and the PREVIOUS
+   * chip stays lit. */
+  --rail-gap: 1rem;
 }
 
 @layer base {
@@ -40,6 +54,10 @@
     /* Keep in-page anchors and focus targets (e.g. the skip link → #main)
      * clear of the sticky nav instead of hidden underneath it. */
     scroll-padding-top: var(--nav-h);
+    /* Category-rail jumps read as a glide rather than a teleport. The
+     * reduced-motion block at the bottom of this file overrides it with
+     * `scroll-behavior: auto !important`, so no media query is needed here. */
+    scroll-behavior: smooth;
   }
 
   body {
@@ -180,6 +198,14 @@ html[data-ios-scrollbar] {
 
 .no-scrollbar::-webkit-scrollbar {
   display: none; /* WebKit (Chrome, Safari, Edge) */
+}
+
+/* The admin menu toast. Neutralized by the reduced-motion block below. */
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
 }
 
 /* Honor users who prefer less motion. */

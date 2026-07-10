@@ -1,8 +1,8 @@
 // Copy for the site shell around the survey: the home landing (`/`) and the
-// menu "coming soon" page (`/menu`). Kept separate from `survey.ts`, which is
-// the VERBATIM survey-card copy from SPEC.md. These strings are NOT from the
-// printed card — they're interface copy (like UI_COPY), written to match the
-// brand's warm, formal-polite Persian tone (note the ZWNJ / نیم‌فاصله).
+// menu page (`/menu`). Kept separate from `survey.ts`, which is the VERBATIM
+// survey-card copy from SPEC.md. These strings are NOT from the printed card —
+// they're interface copy (like UI_COPY), written to match the brand's warm,
+// formal-polite Persian tone (note the ZWNJ / نیم‌فاصله).
 
 export const SITE_COPY = {
   backHome: "بازگشت به خانه",
@@ -12,7 +12,6 @@ export const SITE_COPY = {
 export const HOME_COPY = {
   title: "به لنو خوش آمدید",
   subtitle: "برای دیدن منو یا ثبت نظرتان، یکی از گزینه‌های زیر را انتخاب کنید.",
-  comingSoonBadge: "به‌زودی",
   menu: {
     title: "منو",
     desc: "نگاهی به غذاها و نوشیدنی‌های لنو",
@@ -23,12 +22,27 @@ export const HOME_COPY = {
   },
 } as const;
 
-// Menu page — a branded placeholder until the real menu is ready.
+// Menu page. The `comingSoon` block is the fallback for an empty menu — it can
+// only surface on a fresh database, since the real items ship as a migration.
 export const MENU_COPY = {
-  title: "منوی لنو به‌زودی…",
-  body: "در حال آماده‌سازی منوی کامل لنو هستیم؛ به‌زودی از همین‌جا می‌توانید غذاها و نوشیدنی‌ها را ببینید.",
-  surveyNudge: "تا آن زمان، خوشحال می‌شویم نظرتان را بشنویم.",
-  surveyCta: "ثبت نظر",
+  heroTitle: "منوی لنو",
+  // A claim about the food, then a warm close — not a compliment to the guest.
+  // Whoever is reading this has already sat down; what they want from a menu
+  // header is a reason to trust the kitchen, not to be welcomed a second time.
+  heroSubtitle: "همه‌چیز تازه و همان لحظه آماده می‌شود؛ نوش جانتان.",
+  // sr-only name for the sticky category rail — it is a real <nav>.
+  railLabel: "دسته‌بندی‌های منو",
+  soldOut: "ناموجود",
+  discount: "تخفیف",
+  // sr-only, so the struck-through number is announced for what it is.
+  priceBefore: "قیمت پیش از تخفیف",
+  priceUnit: "تومان",
+  comingSoon: {
+    title: "منوی لنو به‌زودی…",
+    body: "در حال آماده‌سازی منوی کامل لنو هستیم؛ به‌زودی از همین‌جا می‌توانید غذاها و نوشیدنی‌ها را ببینید.",
+    surveyNudge: "تا آن زمان، خوشحال می‌شویم نظرتان را بشنویم.",
+    surveyCta: "ثبت نظر",
+  },
 } as const;
 
 // Primary navigation — shared by the sticky <SiteNav> and the footer link list.

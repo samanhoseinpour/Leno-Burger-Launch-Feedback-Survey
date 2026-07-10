@@ -1,52 +1,7 @@
 import { Brand } from "@/components/Brand";
 import { NavCard } from "@/components/NavCard";
+import { FeedbackIcon, MenuIcon } from "@/components/icons";
 import { HOME_COPY } from "@/lib/site";
-
-// Purposeful destination glyphs for the two home cards (cream stroke on the red
-// badge). Kept here — deliberately NOT the Leno mark — so each card reads as its
-// own thing (food / feedback) rather than repeating the wordmark's badge.
-const iconSvg = "size-6";
-
-function MenuIcon() {
-  // A cloche (domed food cover) — reads clearly as "dining / menu" at 24px,
-  // where a fine fork-and-knife glyph turns to mush.
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      className={iconSvg}
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={1.8}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M3.5 18h17" />
-      <path d="M5 18a7 7 0 0 1 14 0" />
-      <path d="M12 7.5v3.5" />
-      <circle cx="12" cy="6.3" r="1.15" />
-    </svg>
-  );
-}
-
-function FeedbackIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      className={iconSvg}
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={1.8}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M21 15a2 2 0 0 1-2 2H8l-4 4V5a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2z" />
-      <path d="M8 9h8" />
-      <path d="M8 13h5" />
-    </svg>
-  );
-}
 
 // Home landing — the hub for opening day. A type-forward red hero masthead
 // (oversized Vazirmatn-heavy headline; Archivo stays reserved for the "Leno"
@@ -81,7 +36,6 @@ export default function Home() {
             href="/menu"
             title={HOME_COPY.menu.title}
             description={HOME_COPY.menu.desc}
-            badge={HOME_COPY.comingSoonBadge}
             icon={<MenuIcon />}
           />
           <NavCard
