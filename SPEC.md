@@ -129,7 +129,54 @@ model Response {
   phone     String?
   userAgent String?
 }
+
+// The public menu, managed from /admin/menu. `sortOrder` is dense and rewritten
+// wholesale on every reorder; new rows append at max + 1.
+//
+// `icon` holds a key from MENU_ICON_SLUGS (src/lib/menu-icons.ts) — plain
+// nullable TEXT, never an enum, so retiring a slug cannot break a migration or
+// strand a row. Always read it through `resolveIconSlug()`.
+model MenuCategory {
+  id        String     @id @default(cuid())
+  name      String     @unique
+  icon      String?    // a MenuIconSlug; null → the fallback glyph
+  sortOrder Int        @default(0)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  items     MenuItem[]
+}
+
+model MenuItem {
+  id          String       @id @default(cuid())
+  name        String
+  description String?
+  priceToman  Int?         // whole Tomans; null = price not set yet
+  icon        String?      // a MenuIconSlug; null → inherit the category's icon
+  available   Boolean      @default(true)
+  sortOrder   Int          @default(0)
+  categoryId  String
+  category    MenuCategory @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@index([categoryId, sortOrder])
+}
 ```
+
+### Menu icons
+
+Glyphs come from **`lucide`** and **`@lucide/lab`** — the *data* packages, which export
+`[tag, attrs][]` path arrays with no React in them. Never `lucide-react`: its components all
+route through an `"use client"` `<Icon>`, and `/menu` must ship zero icon JavaScript.
+Neither library draws french fries, so `fries` is drawn in-house on the same 24×24,
+`strokeWidth: 1.8`, round-cap grid as `src/components/icons.tsx`.
+
+An item with `icon = null` inherits its category's icon. That is the default: staff pick an
+icon only for a dish that should differ from its category (a chicken burger, a veggie one).
+
+The opening-day menu ships as a **data migration**, not through `prisma/seed.mjs` — the seed
+is destructive dev-only sample data, while `prisma migrate deploy` runs on every build and
+applies the menu exactly once.
 
 ## Pages & routes
 
@@ -138,17 +185,35 @@ through the `(site)` route group. `/admin` sits **outside** that group on purpos
 it never inherits the chrome and stays a self-contained staff surface.
 
 1. **`/` — home hub** (public): the Leno hero plus two cards, one to the menu and one to the survey.
-2. **`/menu`** (public): a branded "coming soon" placeholder until the real menu is ready.
+2. **`/menu`** (public): the live menu, read from the database and grouped by category. Every row
+   leads with a warm icon tile (44px, `bg-cream2`, brand-red glyph). Sold-out items render dimmed
+   with a «ناموجود» pill rather than disappearing; an item with no price shows no price. Cached
+   (`revalidate = 3600`) and refreshed on demand by `revalidatePath("/menu")` from the admin
+   actions. Falls back to a branded "coming soon" panel only if the menu is empty.
+   - A **sticky category rail** sits under the hero and pins beneath the nav (`top: var(--nav-h)`,
+     `z-30`). It appears only when there is more than one category. Chips are real
+     `<a href="#cat-…">` anchors, so the menu navigates without JavaScript; scroll-spy highlighting
+     is the enhancement JS adds. The menu card must therefore be `sm:overflow-clip` — `overflow-hidden`
+     would make it a scroll container and silently kill the sticky rail above `sm`.
 3. **`/survey` — the survey** (public, mobile-first)
    - Header band, instruction, the 6 rating questions, Q7 textarea, optional contact fields, submit button (`ثبت نظر`).
    - Client-side: track selected value per question; submit posts to the server via a Server Action.
    - On success the form **swaps in place** for the thank-you state (footer copy + checkmark), which also blocks duplicate resubmits; the button is disabled while pending.
 4. **`/thanks`** — the same thank-you screen as a standalone route.
-5. **`/admin` — protected dashboard**
+5. **`/admin` — protected staff area**
    - Gate with a single `ADMIN_PASSWORD` env var (login form → httpOnly cookie). No user accounts.
-   - Show: total responses; **average score per question** (with the Persian question text + a 0–5 bar); a **distribution bar** per question (count per option); a **table** of Q7 write-ins with name/phone and timestamp.
-   - **Export CSV** button (UTF-8 with BOM so Persian opens correctly in Excel).
-   - Because the site nav does not render here, the **login screen and the dashboard each carry their own "بازگشت به خانه" link** back to `/`.
+   - `/admin` is a **hub** with two cards; `/admin/survey` and `/admin/menu` are the two sections,
+     shown under a shared shell (masthead + tabs).
+   - `/admin/survey` shows: total responses; **average score per question** (with the Persian question text + a 0–5 bar); a **distribution bar** per question (count per option); a **table** of Q7 write-ins with name/phone and timestamp; and an **Export CSV** button (UTF-8 with BOM so Persian opens correctly in Excel).
+   - `/admin/menu` adds, edits, reorders, deletes and marks items sold out, and manages categories.
+     Both forms carry an **icon picker** (a real radio group, keyboard-operable, 44px tiles). The
+     item picker leads with a «پیش‌فرض دسته» chip that submits `""` and means "inherit the
+     category's icon"; a category must choose a real icon, since it has nothing to inherit from.
+     Create/edit use their own routes so each save lands on a freshly rendered page.
+   - Because the site nav does not render here, the **login screen and the shell each carry their own "بازگشت به خانه" link** back to `/`.
+   - **Every admin page re-checks the session before it queries**, and **every Server Action
+     re-checks it too** — a Server Action is a public HTTP endpoint, and a layout gate cannot
+     protect a page whose body Next renders in parallel with it.
 
 ## Behavior & validation
 
